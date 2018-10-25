@@ -1,0 +1,65 @@
+package com.juicelabs.fhir
+
+import com.google.gson.JsonArray
+import com.google.gson.JsonObject
+
+class FhirValueSet(private val spec: FhirSpec, dict: JsonObject) {
+
+    val definition: JsonObject
+    var valueSetEnum: ValueSetEnum? = null
+
+
+    init {
+//        this.spec = spec
+        definition = dict
+    }
+
+
+    fun enum(): ValueSetEnum? {
+        if (valueSetEnum != null) {
+            return valueSetEnum
+        }
+
+        val compose = definition["compose"]
+        if (compose == null) {
+            Exception("Currently only composed ValueSets are supported")
+        }
+
+        if ((compose as JsonObject).has("exclude")) {
+            Exception("Not currently supporting 'exclude' on ValueSet")
+        }
+
+        val include = compose["include"] as JsonArray
+        if (include.count() != 1) {
+//            logger.warn("Ignoring ValueSet with more than 1 includes ({}: {})".format(len(include), include))
+            return null
+        }
+
+
+        val system = include[0].asJsonObject["system"].asString
+        if (system == null) {
+            return null
+        }
+
+        // alright, this is a ValueSet with 1 include and a system, is there a CodeSystem?
+        val cs = spec.codesystemWithUri(system)
+        if (!cs.generateEnum) {
+            return null
+        }
+
+        val restrictedTo = mutableListOf<JsonObject>()
+        val concepts = spec.codesystemWithUri(system).concepts
+
+        if (concepts != null) {
+            concepts.forEach { concept ->
+                assert(concept.asJsonObject.has("code"))
+                restrictedTo.add(concept.asJsonObject["code"].asJsonObject)
+            }
+        }
+
+        valueSetEnum = ValueSetEnum(cs.name, restrictedTo)
+        return valueSetEnum
+    }
+}
+
+class ValueSetEnum(val name: String, val restrictedTo: List<JsonObject>)
