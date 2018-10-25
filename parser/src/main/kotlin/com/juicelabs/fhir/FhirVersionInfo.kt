@@ -12,6 +12,6 @@ class FhirVersionInfo(val spec: FhirSpec, val directory: String) {
     init {
         now = LocalDateTime.now()
 
-        version = File("version.info").readText(Charsets.UTF_8)
+        version = File("src/test/resources/version.info").readText(Charsets.UTF_8)
     }
 }

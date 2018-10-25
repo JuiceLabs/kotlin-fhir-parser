@@ -232,7 +232,8 @@ class FhirSpec(private val directory: String) { // todo  add supprt for settings
 
 
     private fun readFile(f: String): String {
-        File(f).reader().use { reader ->
+        // todo move path to settings
+        File("src/test/resources/" + f).reader().use { reader ->
             return reader.readText()
         }
     }
