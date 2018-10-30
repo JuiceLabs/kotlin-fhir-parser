@@ -1,7 +1,13 @@
 package com.juicelabs.fhir
 
-import com.squareup.kotlinpoet.*
+import com.squareup.kotlinpoet.ClassName
+import com.squareup.kotlinpoet.CodeBlock
+import com.squareup.kotlinpoet.FileSpec
+import com.squareup.kotlinpoet.FunSpec
+import com.squareup.kotlinpoet.KModifier
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
+import com.squareup.kotlinpoet.PropertySpec
+import com.squareup.kotlinpoet.TypeSpec
 import java.io.File
 import java.time.LocalDateTime.now
 
@@ -15,6 +21,9 @@ class FhirStructureDefinitionRenderer(val spec: FhirSpec) {
 
 
     fun render() {
+
+        renderManualClasses()
+
         spec.writeableProfile().forEach { profile ->
             val classes = profile.writeableClasses()
             val imports = profile.neededExternalClasses()
@@ -26,7 +35,10 @@ class FhirStructureDefinitionRenderer(val spec: FhirSpec) {
             )
 
             val header = buildHeader(data)
-            val out = FileSpec.builder("", profile.targetName)
+            val out = FileSpec.builder(spec.packageName, profile.targetName)
+            val importCodeBlock = buildImports(out, imports)
+
+            val i = ClassName("java.time", "LocalDateTime")
 
             classes.filter { c -> !Mappings.natives.contains(c.name) }.forEach { c ->
                 val classBody = buildClass(c)
@@ -40,15 +52,28 @@ class FhirStructureDefinitionRenderer(val spec: FhirSpec) {
         }
     }
 
-//    private fun buildImports(imports: List<FhirClass>): Int {
-//
-//    }
+    private fun renderManualClasses() {
+        Mappings.manualClasses.forEach { name, props ->
+            val out = FileSpec.builder(spec.packageName, name)
+            // todo imports
+            val classBuilder = TypeSpec.classBuilder(name).addModifiers(KModifier.OPEN)
+
+            props.forEach { propName, typeInfo ->
+                val className = ClassName(spec.packageName, typeInfo.first)
+                // todo support list types
+                val propBuilder = PropertySpec.builder(propName, className).mutable(true)
+                if (typeInfo.second.isNotBlank()) {
+                    propBuilder.initializer(typeInfo.second)
+                }
+                classBuilder.addProperty(propBuilder.build())
+            }
+            out.addType(classBuilder.build())
+            out.build().writeTo(File(spec.info.directory))
+        }
+    }
 
 
     private fun buildClass(cls: FhirClass): TypeSpec {
-
-        val className = ClassName("", cls.name)
-
 
         val classBuilder = TypeSpec.classBuilder(cls.name).addModifiers(KModifier.OPEN)
 
@@ -65,33 +90,34 @@ class FhirStructureDefinitionRenderer(val spec: FhirSpec) {
         val superClass = cls.superClass
         if (superClass != null) {
             buildSuperClassConstructor(superClass, classBuilder)
+        } else if (cls.name == "Resource") {
+            val className = ClassName(spec.packageName, "FhirAbstractResource")
+            val scBuilder = classBuilder.superclass(className)
+            scBuilder.build()
         }
 
         return classBuilder.build()
     }
 
-    private fun buildSuperClassConstructor(cls: FhirClass, classBuilder: TypeSpec.Builder) {
-        val superClass = ClassName("", cls.name)
-        val scBuilder = classBuilder.superclass(superClass)
-        cls.properties.forEach { prop ->
-            val cn = ClassName("", prop.className)
-            //          scBuilder.addSuperclassConstructorParameter(prop.name)
-        }
-        scBuilder.build()
 
+    private fun buildSuperClassConstructor(cls: FhirClass, classBuilder: TypeSpec.Builder) {
+        val superClass = ClassName(spec.packageName, cls.name)
+        val scBuilder = classBuilder.superclass(superClass)
+        scBuilder.build()
     }
+
 
     private fun renderProperty(prop: FhirClassProperty, typeName: String, origName: String, classBuilder: TypeSpec.Builder, primaryCtor: FunSpec.Builder) {
         val mappedTypeName = Mappings.classMap[typeName.decapitalize()] ?: typeName
-        val typeClassName = ClassName("", mappedTypeName)
+        val typeClassName = ClassName(spec.packageName, mappedTypeName)
+
         val propName = Mappings.reservedMap[origName] ?: prop.origName // todo origName?
         if (prop.isList()) {
             val arrayList = ClassName("kotlin.collections", "List")
             val listOfProps = arrayList.parameterizedBy(typeClassName)
             classBuilder.addProperty(PropertySpec.builder(propName, listOfProps)
-                    .initializer(CodeBlock.of("mutableListOf<%L>()", typeClassName))
+                    .initializer(CodeBlock.of("mutableListOf<%T>()", typeClassName))
                     .build())
-            //     primaryCtor.addParameter(ParameterSpec.builder(propName, listOfProps).build())
         } else {
             val propBuilder = PropertySpec.builder(propName, typeClassName.isNullable(prop.min == 0)).mutable(true)
 
@@ -107,17 +133,23 @@ class FhirStructureDefinitionRenderer(val spec: FhirSpec) {
                 }
             }
 
-            classBuilder.addProperty(propBuilder.build())
-            //    .initializer(propName)
-            //                        .addKdoc("%L\n", prop.formalDesc)
-            //.build())
-            //     primaryCtor.addParameter(ParameterSpec.builder(propName, typeClassName.isNullable(prop.min == 0)).build())
+            classBuilder.addProperty(propBuilder
+                    .addKdoc("%L\n", prop.formalDesc)
+                    .build())
         }
     }
 
 
     private fun buildHeader(data: HashMap<String, Any>): CodeBlock {
         return CodeBlock.builder().add("Generated from FHIR %L on %L \n %L, JuiceLab, LLC", data["profile"], now(), now().year).build()
+    }
+
+
+    private fun buildImports(out: FileSpec.Builder, imports: Set<Pair<String, String>>): FileSpec.Builder {
+        imports.forEach { imp ->
+            out.addImport(imp.first, imp.second)
+        }
+        return out
     }
 }
 

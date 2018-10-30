@@ -6,6 +6,7 @@ import com.google.gson.JsonParser
 
 
 class FhirStructureDefinitionElementDefinition(val element: FhirStructureDefinitionElement, dict: JsonObject) {
+    val LOG by logger()
 
     val id: String?
     val types = mutableListOf<FhirElementType>()
@@ -13,7 +14,7 @@ class FhirStructureDefinitionElementDefinition(val element: FhirStructureDefinit
     val name: JsonElement?
     var propName: String? = null // todo huh?
     val contentReference: String?
-    lateinit var contentReferenced: FhirStructureDefinitionElementDefinition
+    var contentReferenced: FhirStructureDefinitionElementDefinition? = null
     val formal: JsonElement?
     val comment: JsonElement?
     val binding: FhirElementBinding?
@@ -54,13 +55,13 @@ class FhirStructureDefinitionElementDefinition(val element: FhirStructureDefinit
     fun resolveDependencies() {
         // update the definition from a reference, if there is one
         if (contentReference != null) {
-            if (contentReference.startsWith("#")) {
-                Exception("Only relative 'contentReference' dict definitions are supported right now")
+            if (!contentReference.startsWith("#")) {
+                throw Exception("Only relative 'contentReference' dict definitions are supported right now")
             }
-            val elem = element.profile.elementWithId(contentReference.substring(2))
+            val elem = element.profile.elementWithId(contentReference.substring(1))
 
             if (elem == null) {
-                Exception("There is no element definiton with id \"{}\", as referenced by {} in {}")
+                throw Exception("There is no element definiton with id ${contentReference}, as referenced by {} in {}")
                 // .format(self.content_reference, self.path, self.profile.url))
             } else {
                 contentReferenced = elem.definition
@@ -69,14 +70,15 @@ class FhirStructureDefinitionElementDefinition(val element: FhirStructureDefinit
 
         // resolve bindings
         if (binding != null && binding.isRequired && (binding.uri != null || binding.canonical != null)) {
-            val uri = if (binding.canonical != null) binding.canonical else binding.uri!!
+            val uri = binding.canonical ?: binding.uri!!
             if (uri.startsWith("http://hl7.org/fhir")) {
-                // logger.debug("Ignoring foreign ValueSet \"{}\"".format(uri))
+                LOG.debug("Ignoring foreign ValueSet \"{}\"".format(uri))
                 return
             }
 
             val valueSet = element.profile.fhirSpec.valuesetWithUri(uri)
             if (valueSet == null) {
+                LOG.error("There is no ValueSet for required binding \"${uri}\" on ${propName} in ${element.profile.name()}")
 //                logger.error("There is no ValueSet for required binding \"{}\" on {} in {}"
 //                        .format(uri, self.name or self.prop_name, self.element.profile.name))
             } else {
@@ -94,8 +96,8 @@ class FhirStructureDefinitionElementDefinition(val element: FhirStructureDefinit
      * "path" component otherwise.
      */
     fun nameIfClass(): String {
-        if (contentReference != null) {
-            return contentReference
+        if (contentReferenced != null) {
+            return contentReferenced!!.nameIfClass()
         }
 
         val withName = if (name != null) name.asString else propName

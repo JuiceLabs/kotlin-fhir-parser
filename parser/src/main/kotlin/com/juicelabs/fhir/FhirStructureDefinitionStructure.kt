@@ -35,6 +35,5 @@ open class FhirStructureDefinitionStructure(val fhirSpec: FhirSpec, val profile:
         snapshot = if (profile.has("snapshot")) profile["snapshot"].asJsonObject["element"] else null
         differential = if (profile.has("differential")) profile["differential"].asJsonObject["element"] else null
 
-        print(1)
     }
 }

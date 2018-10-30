@@ -8,7 +8,8 @@ import java.io.File
 import java.net.URI
 import java.util.*
 
-class FhirSpec(private val directory: String) { // todo  add supprt for settings
+class FhirSpec(val directory: String, val packageName: String) { // todo  add supprt for settings
+    val LOG by logger()
 
     val valueSets: MutableMap<String, FhirValueSet> = HashMap()
     val codeSystems: MutableMap<String, FhirCodeSystem> = HashMap()
@@ -75,7 +76,7 @@ class FhirSpec(private val directory: String) { // todo  add supprt for settings
                 if (resource.has("content") && resource.has("concept")) {
                     codeSystems.put(url, FhirCodeSystem(this, resource))
                 } else {
-                    println("CodeSystem with no concepts: " + url)
+                    LOG.warn("CodeSystem with no concepts: " + url)
                 }
             }
         }
@@ -141,6 +142,7 @@ class FhirSpec(private val directory: String) { // todo  add supprt for settings
      */
     fun handleManualProfiles() {
         // todo impo
+
     }
 
 

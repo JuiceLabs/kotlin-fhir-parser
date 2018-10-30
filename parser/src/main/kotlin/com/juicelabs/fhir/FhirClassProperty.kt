@@ -58,7 +58,48 @@ class FhirClassProperty(element: FhirStructureDefinitionElement, type: FhirEleme
     }
 
     fun isList(): Boolean {
-        return ((min == 0 && (max == -1 || max > 1)) || (min > 1))
+        return (((min == 0 || min == 1) && (max == -1 || max > 1)) || (min > 1))
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as FhirClassProperty
+
+        if (spec != other.spec) return false
+        if (path != other.path) return false
+        if (typeName != other.typeName) return false
+        if (name != other.name) return false
+        if (one_of_many != other.one_of_many) return false
+        if (min != other.min) return false
+        if (max != other.max) return false
+        if (origName != other.origName) return false
+        if (parentName != other.parentName) return false
+        if (className != other.className) return false
+        if (jsonClass != other.jsonClass) return false
+        if (shortDesc != other.shortDesc) return false
+        if (formalDesc != other.formalDesc) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = spec.hashCode()
+        result = 31 * result + (path?.hashCode() ?: 0)
+        result = 31 * result + typeName.hashCode()
+        result = 31 * result + name.hashCode()
+        result = 31 * result + (one_of_many?.hashCode() ?: 0)
+        result = 31 * result + min
+        result = 31 * result + max
+        result = 31 * result + origName.hashCode()
+        result = 31 * result + parentName.hashCode()
+        result = 31 * result + className.hashCode()
+        result = 31 * result + (jsonClass?.hashCode() ?: 0)
+        result = 31 * result + shortDesc.hashCode()
+        result = 31 * result + formalDesc.hashCode()
+        return result
+    }
+
 
 }

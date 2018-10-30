@@ -31,7 +31,7 @@ class FhirStructureDefinitionElement(val profile: FhirStructureDefinition, eleme
         parentName = if (p.contains(".")) p.substringBeforeLast(".") else ""
         propertyName = parts.last()
 
-        println("${parentName} - ${propertyName}")
+//        println("${parentName} - ${propertyName}")
         // todo add check for - in name
 
         definition = FhirStructureDefinitionElementDefinition(this, element)
@@ -76,12 +76,12 @@ class FhirStructureDefinitionElement(val profile: FhirStructureDefinition, eleme
      * created class as the first and all inline defined subclasses as the
      * second item in the tuple.
      */
-    fun createClass(module: String? = null): Pair<FhirClass?, Map<FhirClass, List<FhirClass>>> {
+    fun createClass(module: String? = null): Pair<FhirClass?, MutableList<FhirClass>> {
         assert(dependenciesResolved)
-        if (!representsClass) return Pair(null, emptyMap<FhirClass, List<FhirClass>>())
+        if (!representsClass) return Pair(null, mutableListOf<FhirClass>())
 
         var className = nameIfClass()
-        val subs = mutableMapOf<FhirClass, List<FhirClass>>()
+        val subs = mutableListOf<FhirClass>()
 
         val (klass, didCreate) = FhirClass.forElement(this)
         if (didCreate) {
@@ -101,7 +101,12 @@ class FhirStructureDefinitionElement(val profile: FhirStructureDefinition, eleme
                 // collect subclasses
                 val (sub, kids) = child.createClass(module) // todo eek
                 if (sub != null) {
-                    subs.put(sub, if (kids.count() > 0 && kids.containsKey(sub)) kids[sub]!! else emptyList())
+                    subs.add(sub)
+//                    subs.put(sub, if (kids.count() > 0 && kids.containsKey(sub)) kids[sub]!! else emptyList())
+                }
+
+                if (kids.isNotEmpty()) {
+                    subs.addAll(kids)
                 }
 
                 // add properties to class
@@ -157,6 +162,7 @@ class FhirStructureDefinitionElement(val profile: FhirStructureDefinition, eleme
 
         // no `type` definition in the element: it's a property with an inline class definition
         val typeObj = FhirElementType()
+//        println("typename = ${nameIfClass()}")
         return listOf(FhirClassProperty(this, typeObj, nameIfClass()))
     }
 

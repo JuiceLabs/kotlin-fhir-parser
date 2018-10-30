@@ -24,13 +24,12 @@ class Mappings {
                 "integer" to "Int",
                 "positiveInt" to "Int",
                 "unsignedInt" to "Int",
-                "date" to "FHIRDate",
-                "dateTime" to "FHIRDate",
-                "instant" to "FHIRDate",
-                "time" to "FHIRDate",
+                "date" to "FhirDate",
+                "dateTime" to "FhirDate",
+                "instant" to "FhirDate",
+                "time" to "FhirDate",
                 "decimal" to "Float",
 
-//                "string" to "String",
                 "markdown" to "String",
                 "id" to "String",
                 "code" to "String", // for now we"re not generating enums for these
@@ -41,6 +40,12 @@ class Mappings {
                 "uuid" to "String",
                 "xhtml" to "String",
                 "base64Binary" to "String"
+        )
+
+        // todo KotlinPoet should pick these up automatically but isn't
+        val imports = mapOf(
+                "LocalDateTime" to Pair("java.time", "LocalDateTime"),
+                "LocalDate" to Pair("java.time", "LocalDate")
         )
 
         val enumNameMap = mapOf<String, String>(
@@ -54,21 +59,29 @@ class Mappings {
                 "int" to "int",
                 "bool" to "bool",
                 "float" to "float",
-                "FHIRDate" to "String"
+                "FhirDate" to "FhirDateTime"
         )
 
         val jsonMapDefault = "dict"
 
         // Which class names are native to the language (or can be treated this way)
-        val natives = listOf<String>( "Int", "Float", "Boolean", "String", "List")
+        val natives = listOf<String>( "Int", "Float", "Boolean", "String", "List",
+                "LocalDateTime", "FhirDate")
 
         val defaultValues = mapOf<String, String>(
                 "String" to """""""",
                 "Boolean" to "false",
                 "Int" to "0",
-                "Float" to "0.0"
-//                "Reference" to "Reference()",
-//                "CodeableConcept" to "CodeableConcept()"
+                "Float" to "0.0f",
+                "LocalDate" to "LocalDate.now()",
+                "LocalDateTime" to "LocalDateTime.now()",
+                "FhirDate" to "FhirDate.now()"
+        )
+
+        val manualClasses = mapOf(
+                "FhirAbstractResource" to mapOf(
+                        "resourceType" to Pair("String?", "null")
+                )
         )
     }
 }

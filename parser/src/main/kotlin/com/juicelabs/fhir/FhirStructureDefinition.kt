@@ -27,7 +27,6 @@ class FhirStructureDefinition(val fhirSpec: FhirSpec, val profile: JsonObject) {
         url = profile.get("url")
 
         structure.parseFrom(profile)
-        print(2)
     }
 
 
@@ -35,8 +34,10 @@ class FhirStructureDefinition(val fhirSpec: FhirSpec, val profile: JsonObject) {
         val struct = if (structure.differential != null) structure.differential as JsonArray else structure.snapshot as JsonArray
 
         //  val mapped = HashMap()
+        var i = 0
         val mapped = mutableMapOf<String, FhirStructureDefinitionElement>()
         struct.forEach { e ->
+            i++
             val element = FhirStructureDefinitionElement(this, e as JsonObject, (mainElement == null))
             elements.add(element)
             val path = element.path!!
@@ -48,6 +49,7 @@ class FhirStructureDefinition(val fhirSpec: FhirSpec, val profile: JsonObject) {
             }
 
             val parent = mapped[element.parentName]
+//            println("--- ${element.parentName} --  ${parent}")
             if (parent != null) {
                 parent.addChild(element)
             }
@@ -75,15 +77,9 @@ class FhirStructureDefinition(val fhirSpec: FhirSpec, val profile: JsonObject) {
             } else {
                 foundClass(snapClass)
 
-
-                kids.keys.forEach { cls ->
+                kids.forEach { cls ->
                     foundClass(cls)
                 }
-//                kids.forEach { klass, subs ->
-//                    subs.forEach { sub ->
-//                        foundClass(sub)
-//                    }
-//                }
 
                 targetName = snapClass.name
             }
@@ -138,36 +134,41 @@ class FhirStructureDefinition(val fhirSpec: FhirSpec, val profile: JsonObject) {
      * Returns a unique list of class items that are needed for any of the
      * receiver's classes' properties and are not defined in this profile.
      */
-    fun neededExternalClasses(): List<FhirClass> {
+    fun neededExternalClasses(): Set<Pair<String, String>> {
         val internal = mutableSetOf<String>()
         internal.addAll(classes.map { it.name })
 
-        val needed = mutableSetOf<String>()
+        val needed = mutableSetOf<Pair<String,String>>()
         val needs = mutableListOf<FhirClass>()
 
         classes.forEach { cls ->
             val superClass = cls.superClass
-            if (superClass != null && !internal.contains(superClass.name) && !needed.contains(superClass.name)) {
-                needed.add(superClass.name)
-                needs.add(superClass)
-            }
+//            if (superClass != null && !internal.contains(superClass.name) && !needed.contains(superClass.name)) {
+//                needed.add(superClass.name)
+//                needs.add(superClass)
+//            }
 
             cls.properties.forEach { prop ->
                 val propClassName = prop.className
-                if (!internal.contains(propClassName) && !fhirSpec.classNameIsNative(propClassName)) {
-                    val propClass = FhirClass.withName(propClassName)
-                    if (propClass == null) {
-                        Exception("'There is no class \"{}\" for property \"{}\" on \"{}\" in {}'.format(prop_cls_name, prop.name, klass.name, self.name))")
-                    } else {
-                        // todo wtf?  prop.moduleName = propClass.module
-                        if (!needed.contains(propClassName)) {
-                            needed.add(propClassName)
-                            needs.add(propClass)
-                        }
-                    }
+                val typeName = Mappings.classMap[prop.typeName.decapitalize()] ?: prop.typeName
+                if (Mappings.imports.containsKey(typeName)) {
+                    needed.add(Mappings.imports[typeName]!!)
+
                 }
+//                else if (!internal.contains(propClassName) && !fhirSpec.classNameIsNative(propClassName)) {
+//                    val propClass = FhirClass.withName(propClassName)
+//                    if (propClass == null) {
+//                        Exception("There is no class \"${propClassName}\" for property \"${prop.name}\" on \"{klass.name}\" in ${name()}")
+//                    } else {
+//                        // todo wtf?  prop.moduleName = propClass.module
+//                        if (propClassName in needed) {// !needed.contains(propClassName)) {
+//                            needed.add(propClassName)
+//                            needs.add(propClass)
+//                        }
+//                    }
+//                }
             }
         }
-        return needs.sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER, { it.name }))
+        return needed
     }
 }
