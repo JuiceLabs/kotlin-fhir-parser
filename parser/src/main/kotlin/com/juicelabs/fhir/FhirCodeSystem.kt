@@ -6,6 +6,8 @@ import com.google.gson.JsonObject
 
 class FhirCodeSystem(spec: FhirSpec, resource: JsonObject) {
 
+    val LOG by logger()
+
     val spec: FhirSpec
     val definition: JsonObject
     val url: String?
@@ -26,15 +28,12 @@ class FhirCodeSystem(spec: FhirSpec, resource: JsonObject) {
             if (generateEnum) {
                 if (concepts.count() > 200) {
                     generateEnum = false
-                    //logger.info("Will not generate enum for CodeSystem \"{}\" because it has > 200 ({}) concepts"
-                    //        .format(self.url, len(concepts)))
+                    LOG.info("Will not generate enum for CodeSystem \"${url}\" because it has > 200 (${concepts.size()}) concepts")
                 } else {
                     codes.addAll(parsedCodes(concepts))
                 }
             } else {
-                // todo log
-//                logger.debug("Will not generate enum for CodeSystem \"{}\" whose content is {}"
-//                        .format(self.url, resource['content']))
+                LOG.debug("Will not generate enum for CodeSystem \"${url}\" whose content is ${definition["content"]}")
             }
         } else {
             generateEnum = false

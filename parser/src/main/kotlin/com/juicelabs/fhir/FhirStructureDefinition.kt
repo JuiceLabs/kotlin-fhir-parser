@@ -33,7 +33,6 @@ class FhirStructureDefinition(val fhirSpec: FhirSpec, val profile: JsonObject) {
     fun processProfile() {
         val struct = if (structure.differential != null) structure.differential as JsonArray else structure.snapshot as JsonArray
 
-        //  val mapped = HashMap()
         var i = 0
         val mapped = mutableMapOf<String, FhirStructureDefinitionElement>()
         struct.forEach { e ->
@@ -49,7 +48,6 @@ class FhirStructureDefinition(val fhirSpec: FhirSpec, val profile: JsonObject) {
             }
 
             val parent = mapped[element.parentName]
-//            println("--- ${element.parentName} --  ${parent}")
             if (parent != null) {
                 parent.addChild(element)
             }
@@ -73,7 +71,7 @@ class FhirStructureDefinition(val fhirSpec: FhirSpec, val profile: JsonObject) {
             val (snapClass, kids) = mainElement!!.createClass() // todo stench
 
             if (snapClass == null) {
-                Exception("The main element for \"{}\" did not create a class") // self.url
+                throw Exception("The main element for \"${url}\" did not create a class")
             } else {
                 foundClass(snapClass)
 
@@ -109,8 +107,7 @@ class FhirStructureDefinition(val fhirSpec: FhirSpec, val profile: JsonObject) {
             if (c.superClass == null) {
                 val sc = FhirClass.withName(c.superclassName)
                 if (sc == null && c.superclassName != null) {
-                    Exception("There is no class implementation for class named {} in profile {}")
-//                            .format(cls.superclass_name, self.url))
+                   throw Exception("There is no class implementation for class named ${c.superclassName} in profile ${url}")
                 }
                 c.superClass = sc
             }

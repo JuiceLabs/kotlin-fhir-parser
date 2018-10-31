@@ -23,10 +23,7 @@ class FhirStructureDefinitionElementDefinition(val element: FhirStructureDefinit
     val slicing: JsonElement?
     val representation: JsonElement?
 
-//    private val element: FhirStructureDefinitionElement
-
     init {
-//        this.element = element
         this.id = if (dict.has("id")) dict["id"].asString else null
         if (dict.has("type")) {
             dict.getAsJsonArray("type").forEach { e ->
@@ -79,8 +76,6 @@ class FhirStructureDefinitionElementDefinition(val element: FhirStructureDefinit
             val valueSet = element.profile.fhirSpec.valuesetWithUri(uri)
             if (valueSet == null) {
                 LOG.error("There is no ValueSet for required binding \"${uri}\" on ${propName} in ${element.profile.name()}")
-//                logger.error("There is no ValueSet for required binding \"{}\" on {} in {}"
-//                        .format(uri, self.name or self.prop_name, self.element.profile.name))
             } else {
                 element.valueSet = valueSet
                 element.enum = valueSet.enum()

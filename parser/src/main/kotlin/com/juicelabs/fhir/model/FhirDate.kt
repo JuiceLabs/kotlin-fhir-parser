@@ -13,7 +13,6 @@ import java.util.*
  *  A date or partial date (e.g. just year or year + month). There is no time zone. The format is a union of the schema
  *  types gYear, gYearMonth and date.  Dates SHALL be valid dates.
  */
-//@JsonSerialize(using = FhirDateSerializer::class)
 class FhirDate(private val input: String) {
 
     companion object {

@@ -3,15 +3,12 @@ package com.juicelabs.fhir
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 
-class FhirValueSet(private val spec: FhirSpec, dict: JsonObject) {
-
-    val definition: JsonObject
+class FhirValueSet(private val spec: FhirSpec, val definition: JsonObject) {
+    val LOG by logger()
     var valueSetEnum: ValueSetEnum? = null
 
 
     init {
-//        this.spec = spec
-        definition = dict
     }
 
 
@@ -31,7 +28,7 @@ class FhirValueSet(private val spec: FhirSpec, dict: JsonObject) {
 
         val include = compose["include"] as JsonArray
         if (include.count() != 1) {
-//            logger.warn("Ignoring ValueSet with more than 1 includes ({}: {})".format(len(include), include))
+            LOG.warn("Ignoring ValueSet with more than 1 includes (${include.count()}: ${include})")
             return null
         }
 

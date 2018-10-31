@@ -31,7 +31,6 @@ class FhirStructureDefinitionElement(val profile: FhirStructureDefinition, eleme
         parentName = if (p.contains(".")) p.substringBeforeLast(".") else ""
         propertyName = parts.last()
 
-//        println("${parentName} - ${propertyName}")
         // todo add check for - in name
 
         definition = FhirStructureDefinitionElementDefinition(this, element)
@@ -162,7 +161,6 @@ class FhirStructureDefinitionElement(val profile: FhirStructureDefinition, eleme
 
         // no `type` definition in the element: it's a property with an inline class definition
         val typeObj = FhirElementType()
-//        println("typename = ${nameIfClass()}")
         return listOf(FhirClassProperty(this, typeObj, nameIfClass()))
     }
 
@@ -185,8 +183,7 @@ class FhirStructureDefinitionElement(val profile: FhirStructureDefinition, eleme
         if (superclassName == null) {
             val types = definition.types
             if (types.size > 1) {
-//                Exception('Have more than one type to determine superclass in "{}": "{}"'
-//                        .format(self.path, tps))
+                throw Exception("Have more than one type to determine superclass in '${path}': '${types}'")
             }
             var typeCode: String? = null
             if (isMainProfileElement && profile.structure.subClassOf != null) {
