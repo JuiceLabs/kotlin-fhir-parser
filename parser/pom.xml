@@ -3,13 +3,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.example</groupId>
-    <artifactId>demo</artifactId>
+    <groupId>com.juicelabs.fhir</groupId>
+    <artifactId>model-generator</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>Kotlin on FHIR</name>
-    <description>Kotlin FHIR</description>
+    <name>Kotlin on FHIR Model Generator</name>
+    <description>Kotlin on FHIR</description>
 
     <!--<parent>-->
         <!--<groupId>org.springframework.boot</groupId>-->
@@ -23,60 +23,43 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
         <kotlin.version>1.2.71</kotlin.version>
-        <hapi.version>3.5.0-SNAPSHOT</hapi.version>
+        <gson.version>2.8.5</gson.version>
+        <kotlinpoet.version>1.0.0-RC1</kotlinpoet.version>
+        <slf4j.version>1.6.6</slf4j.version>
+        <logback.version>1.0.9</logback.version>
+        <junit.version>5.1.0</junit.version>
     </properties>
 
     <dependencies>
+
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-stdlib-jdk8</artifactId>
+            <version>${kotlin.version}</version>
         </dependency>
-
-        <!--<dependency>-->
-            <!--<groupId>org.jetbrains.kotlin</groupId>-->
-            <!--<artifactId>kotlin-reflect</artifactId>-->
-        <!--</dependency>-->
 
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
-            <version>2.8.5</version>
+            <version>${gson.version}</version>
         </dependency>
 
         <dependency>
             <groupId>com.squareup</groupId>
             <artifactId>kotlinpoet</artifactId>
-            <version>1.0.0-RC1</version>
+            <version>${kotlinpoet.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.6.6</version>
+            <version>${slf4j.version}</version>
         </dependency>
 
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.0.9</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>2.9.7</version>
-        </dependency>
-
-        <!--<dependency>-->
-            <!--<groupId>org.springframework.boot</groupId>-->
-            <!--<artifactId>spring-boot-starter-test</artifactId>-->
-            <!--<scope>test</scope>-->
-        <!--</dependency>-->
-        <!---->
-        <dependency>
-            <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-stdlib-jdk8</artifactId>
-            <version>${kotlin.version}</version>
+            <version>${logback.version}</version>
         </dependency>
 
         <dependency>
@@ -89,14 +72,14 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
-            <version>5.1.0</version>
+            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-params</artifactId>
-            <version>5.1.0</version>
+            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -154,6 +137,4 @@
             </plugin>
         </plugins>
     </build>
-
-
 </project>

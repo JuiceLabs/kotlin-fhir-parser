@@ -1,4 +1,4 @@
 .idea
-fhir-parser.iml
+*.iml
 target
 parser-lib/src/main/kotlin/model/*.kt
