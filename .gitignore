@@ -2,3 +2,4 @@
 *.iml
 target
 parser-lib/src/main/kotlin/model/*.kt
+model-generator/download
