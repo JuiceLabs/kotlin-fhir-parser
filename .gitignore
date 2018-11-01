@@ -1,6 +1,6 @@
 .idea
 *.iml
 target
-fhir-parser/src/main/kotlin/model/*.kt
-fhir-parser/src/test/kotlin/model/*.kt
+fhir-parser/src/main/kotlin/com/juicelabs/fhir/model/*.kt
+fhir-parser/src/test/kotlin/com/juicelabs/fhir/model/*.kt
 model-generator/download
