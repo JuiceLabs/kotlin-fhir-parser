@@ -2,7 +2,6 @@ package com.juicelabs.fhir
 
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
-import com.google.gson.JsonParser
 
 
 class FhirStructureDefinitionElementDefinition(val element: FhirStructureDefinitionElement, dict: JsonObject) {

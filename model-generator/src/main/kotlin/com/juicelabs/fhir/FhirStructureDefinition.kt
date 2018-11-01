@@ -107,7 +107,7 @@ class FhirStructureDefinition(val fhirSpec: FhirSpec, val profile: JsonObject) {
             if (c.superClass == null) {
                 val sc = FhirClass.withName(c.superclassName)
                 if (sc == null && c.superclassName != null) {
- //                  throw Exception("There is no class implementation for class named ${c.superclassName} in profile ${url}")
+                    //                  throw Exception("There is no class implementation for class named ${c.superclassName} in profile ${url}")
                 }
                 c.superClass = sc
             }
@@ -135,7 +135,7 @@ class FhirStructureDefinition(val fhirSpec: FhirSpec, val profile: JsonObject) {
         val internal = mutableSetOf<String>()
         internal.addAll(classes.map { it.name })
 
-        val needed = mutableSetOf<Pair<String,String>>()
+        val needed = mutableSetOf<Pair<String, String>>()
         val needs = mutableListOf<FhirClass>()
 
         classes.forEach { cls ->

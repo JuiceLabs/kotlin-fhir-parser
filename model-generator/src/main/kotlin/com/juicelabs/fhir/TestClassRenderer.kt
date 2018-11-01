@@ -11,7 +11,6 @@ import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.KModifier
 import com.squareup.kotlinpoet.TypeSpec
 import com.squareup.kotlinpoet.asTypeName
-import com.sun.tools.hat.internal.parser.Reader.readFile
 import java.io.File
 
 
@@ -35,7 +34,7 @@ class TestClassRenderer(val spec: FhirSpec) {
         val parser = JsonParser()
         var jsonObject = JsonObject()
         try {
-             jsonObject = parser.parse(readFile(file)).getAsJsonObject()
+            jsonObject = parser.parse(readFile(file)).getAsJsonObject()
         } catch (e: Exception) {
             print("")
         }
@@ -66,7 +65,7 @@ class TestClassRenderer(val spec: FhirSpec) {
         val testClass = ClassName("org.junit.jupiter.api", "Test")
         val parentClass = ClassName("com.juicelabs.fhir.model", "DataTests")
 
-        c.forEach {fhirClass, dataList ->
+        c.forEach { fhirClass, dataList ->
             val out = FileSpec.builder(spec.packageName, fhirClass.name + "Test")
             dataList.forEach { (exampleFilename, jsonObject) ->
                 out.addType(createTestClass(fhirClass, exampleFilename, jsonObject, parentClass))

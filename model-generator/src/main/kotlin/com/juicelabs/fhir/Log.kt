@@ -17,6 +17,6 @@ fun <T : Any> unwrapCompanionClass(ofClass: Class<T>): Class<*> {
 }
 
 // unwrap companion class to enclosing class given a Kotlin Class
-fun <T: Any> unwrapCompanionClass(ofClass: KClass<T>): KClass<*> {
+fun <T : Any> unwrapCompanionClass(ofClass: KClass<T>): KClass<*> {
     return unwrapCompanionClass(ofClass.java).kotlin
 }

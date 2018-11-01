@@ -15,7 +15,7 @@ open class FhirRenderer(val spec: FhirSpec) {
                 .walk()
                 .filter { it.name != "model" }
                 .forEach {
-            it.copyTo(File("${Settings.destinationSrcDir}/com/juicelabs/fhir/model/${it.name}"), true)
-        }
+                    it.copyTo(File("${Settings.destinationSrcDir}/com/juicelabs/fhir/model/${it.name}"), true)
+                }
     }
 }

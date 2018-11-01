@@ -73,7 +73,7 @@ class Settings {
         val jsonMapDefault = "dict"
 
         // Which class names are native to the language (or can be treated this way)
-        val natives = listOf<String>( "Int", "Float", "Boolean", "String", "List",
+        val natives = listOf<String>("Int", "Float", "Boolean", "String", "List",
                 "LocalDateTime", "FhirDate")
 
         val defaultValues = mapOf<String, String>(

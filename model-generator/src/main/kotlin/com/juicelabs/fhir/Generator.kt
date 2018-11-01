@@ -39,9 +39,9 @@ fun copyExamples() {
             .walk()
             .filter { it.name.contains("example") }
             .filter { !it.name.startsWith("list") }
-            .forEach {
-                it.copyTo(File("${Settings.samplesDir}/${it.name}"), true)
-                println("Copying example file: ${it.name}")
+            .forEach { file ->
+                file.copyTo(File("${Settings.samplesDir}/${file.name}"), true)
+                println("Copying example file: ${file.name}")
                 i++
             }
     println("Copied ${i} example files")
@@ -62,17 +62,17 @@ fun deleteFiles(directory: String) {
 }
 
 fun downloadFromUrl(url: URL, localFilename: String) {
-        println("Downloading: ${url}")
-        val urlConn = url.openConnection()
+    println("Downloading: ${url}")
+    val urlConn = url.openConnection()
 
-        val inputStream = urlConn.getInputStream()
-        val fos = FileOutputStream(localFilename)
+    val inputStream = urlConn.getInputStream()
+    val fos = FileOutputStream(localFilename)
 
-        inputStream.use {
-            fos.use { output ->
-                inputStream.copyTo(output)
-            }
+    inputStream.use {
+        fos.use { output ->
+            inputStream.copyTo(output)
         }
+    }
 }
 
 fun unzip(_zipFile: String, _targetLocation: String) {
