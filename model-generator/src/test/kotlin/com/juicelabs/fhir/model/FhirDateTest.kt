@@ -40,7 +40,7 @@ class FhirDateTest() {
     @ParameterizedTest
     @ValueSource(strings = ["ABCD", "200F", "2016-22-12"])
     fun `invalid data tests`(y: String) {
-        val exception = Assertions.assertThrows(Exception::class.java) {
+        Assertions.assertThrows(Exception::class.java) {
             FhirDate(y)
         }
     }
