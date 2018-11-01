@@ -32,9 +32,8 @@ class FhirStructureDefinitionRenderer(val spec: FhirSpec) {
 
             val header = buildHeader(data)
             val out = FileSpec.builder(spec.packageName, profile.targetName)
-            val importCodeBlock = buildImports(out, imports)
 
-            val i = ClassName("java.time", "LocalDateTime")
+            out.addComment(header)
 
             classes.filter { c -> !Settings.natives.contains(c.name) }.forEach { c ->
                 val classBody = buildClass(c)
@@ -73,13 +72,11 @@ class FhirStructureDefinitionRenderer(val spec: FhirSpec) {
 
         val classBuilder = TypeSpec.classBuilder(cls.name).addModifiers(KModifier.OPEN)
 
-        var i = 0
-
         val primaryCtor = FunSpec.constructorBuilder()
 
         classBuilder.addKdoc("%L\n\n%L\n", cls.short!!.asString, cls.formal!!.asString)
         cls.properties.forEach { prop ->
-            renderProperty(prop, prop.typeName, prop.origName, classBuilder, primaryCtor)
+            renderProperty(prop, prop.typeName, prop.origName, classBuilder)
         }
         classBuilder.primaryConstructor(primaryCtor.build())
 
@@ -103,7 +100,7 @@ class FhirStructureDefinitionRenderer(val spec: FhirSpec) {
     }
 
 
-    private fun renderProperty(prop: FhirClassProperty, typeName: String, origName: String, classBuilder: TypeSpec.Builder, primaryCtor: FunSpec.Builder) {
+    private fun renderProperty(prop: FhirClassProperty, typeName: String, origName: String, classBuilder: TypeSpec.Builder) {
         val mappedTypeName = Settings.classMap[typeName.decapitalize()] ?: typeName
         val typeClassName = ClassName(spec.packageName, mappedTypeName)
 
@@ -136,8 +133,8 @@ class FhirStructureDefinitionRenderer(val spec: FhirSpec) {
     }
 
 
-    private fun buildHeader(data: HashMap<String, Any>): CodeBlock {
-        return CodeBlock.builder().add("Generated from FHIR %L on %L \n %L, JuiceLab, LLC", data["profile"], now(), now().year).build()
+    private fun buildHeader(data: HashMap<String, Any>): String {
+        return "Generated from FHIR ${data["profile"]} on ${now()} \n ${now().year}, JuiceLab, LLC"
     }
 
 

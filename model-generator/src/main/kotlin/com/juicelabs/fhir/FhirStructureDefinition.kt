@@ -57,11 +57,11 @@ class FhirStructureDefinition(val fhirSpec: FhirSpec, val profile: JsonObject) {
             }
 
             // run check: if n_min > 0 and parent is in summary, must also be in summary
-            elements.forEach { e ->
-                val p = e.parent
-                if (e.min != null && p != null && p.isSummary && !e.isSummary) {
+            elements.forEach { elem ->
+                val p = elem.parent
+                if (elem.min != null && p != null && p.isSummary && !elem.isSummary) {
                     //logger.error("n_min > 0 but not summary: `{}`".format(element.path))
-                    e.summaryMinConflict = true
+                    elem.summaryMinConflict = true
                 }
             }
         }
@@ -136,34 +136,16 @@ class FhirStructureDefinition(val fhirSpec: FhirSpec, val profile: JsonObject) {
         internal.addAll(classes.map { it.name })
 
         val needed = mutableSetOf<Pair<String, String>>()
-        val needs = mutableListOf<FhirClass>()
 
         classes.forEach { cls ->
-            val superClass = cls.superClass
-//            if (superClass != null && !internal.contains(superClass.name) && !needed.contains(superClass.name)) {
-//                needed.add(superClass.name)
-//                needs.add(superClass)
-//            }
 
             cls.properties.forEach { prop ->
-                val propClassName = prop.className
                 val typeName = Settings.classMap[prop.typeName.decapitalize()] ?: prop.typeName
                 if (Settings.imports.containsKey(typeName)) {
                     needed.add(Settings.imports[typeName]!!)
 
                 }
-//                else if (!internal.contains(propClassName) && !fhirSpec.classNameIsNative(propClassName)) {
-//                    val propClass = FhirClass.withName(propClassName)
-//                    if (propClass == null) {
-//                        Exception("There is no class \"${propClassName}\" for property \"${prop.name}\" on \"{klass.name}\" in ${name()}")
-//                    } else {
-//                        // todo wtf?  prop.moduleName = propClass.module
-//                        if (propClassName in needed) {// !needed.contains(propClassName)) {
-//                            needed.add(propClassName)
-//                            needs.add(propClass)
-//                        }
-//                    }
-//                }
+
             }
         }
         return needed

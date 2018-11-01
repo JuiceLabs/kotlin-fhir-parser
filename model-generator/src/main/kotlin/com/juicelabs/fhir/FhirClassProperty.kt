@@ -95,7 +95,7 @@ class FhirClassProperty(element: FhirStructureDefinitionElement, type: FhirEleme
         result = 31 * result + origName.hashCode()
         result = 31 * result + parentName.hashCode()
         result = 31 * result + className.hashCode()
-        result = 31 * result + (jsonClass?.hashCode() ?: 0)
+        result = 31 * result + (jsonClass.hashCode())
         result = 31 * result + shortDesc.hashCode()
         result = 31 * result + formalDesc.hashCode()
         return result

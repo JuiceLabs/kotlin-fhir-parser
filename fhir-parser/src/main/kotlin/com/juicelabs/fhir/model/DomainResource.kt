@@ -1,3 +1,5 @@
+// Generated from FHIR com.juicelabs.fhir.FhirStructureDefinition@55b1d2e on 2018-11-01T09:18:59.836 
+//  2018, JuiceLab, LLC
 package com.juicelabs.fhir.model
 
 import kotlin.collections.List

@@ -79,7 +79,7 @@ class FhirStructureDefinitionElement(val profile: FhirStructureDefinition, eleme
         assert(dependenciesResolved)
         if (!representsClass) return Pair(null, mutableListOf<FhirClass>())
 
-        var className = nameIfClass()
+//        var className = nameIfClass()
         val subs = mutableListOf<FhirClass>()
 
         val (klass, didCreate) = FhirClass.forElement(this)

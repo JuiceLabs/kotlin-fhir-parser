@@ -1,5 +1,6 @@
 .idea
 *.iml
 target
-parser-lib/src/main/kotlin/model/*.kt
+fhir-parser/src/main/kotlin/model/*.kt
+fhir-parser/src/test/kotlin/model/*.kt
 model-generator/download

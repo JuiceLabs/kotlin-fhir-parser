@@ -1,3 +1,5 @@
+// Generated from FHIR com.juicelabs.fhir.FhirStructureDefinition@2d37ec5a on 2018-11-01T09:18:59.979 
+//  2018, JuiceLab, LLC
 package com.juicelabs.fhir.model
 
 /**

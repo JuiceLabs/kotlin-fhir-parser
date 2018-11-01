@@ -64,7 +64,6 @@ class FhirSpec(val directory: String, val packageName: String) {
         val resources = readBundleResources("valuesets.json")
         resources.forEach { res ->
             val resource = res as JsonObject
-            var i = 0
             val resourceType = resource.get("resourceType").asString
             val url = resource.get("url").asString
 

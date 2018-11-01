@@ -62,7 +62,7 @@ class TestClassRenderer(val spec: FhirSpec) {
 
         createParaentClass()
 
-        val testClass = ClassName("org.junit.jupiter.api", "Test")
+//        val testClass = ClassName("org.junit.jupiter.api", "Test")
         val parentClass = ClassName("com.juicelabs.fhir.model", "DataTests")
 
         c.forEach { fhirClass, dataList ->
