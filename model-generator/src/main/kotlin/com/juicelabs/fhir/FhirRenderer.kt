@@ -7,11 +7,12 @@ open class FhirRenderer(val spec: FhirSpec) {
     fun build() {
         FhirStructureDefinitionRenderer(spec).render()
         TestClassRenderer(spec)
-        copyDefaultClasses()
+ //       copyDefaultClasses()
     }
 
     private fun copyDefaultClasses() {
-        File("./src/main/kotlin/com/juicelabs/fhir/model")
+
+        File("./src/main/kotlin/com/juicelabs/fhir/default")
                 .walk()
                 .filter { it.name != "model" }
                 .forEach {

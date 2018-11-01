@@ -16,8 +16,8 @@ fun main(args: Array<String>) {
         deleteFiles(Settings.downloadDir)
         downloadSpec(baseUrl)
     }
-    deleteFiles(Settings.destinationSrcDir)
-    deleteFiles(Settings.destinationTestDir)
+    deleteFiles(Settings.destinationSrcDir + "/model")
+    deleteFiles(Settings.destinationTestDir + "/model")
     val fhirSpec = FhirSpec(Settings.destinationSrcDir, "com.juicelabs.fhir.model")
     fhirSpec.prepare()
     FhirRenderer(fhirSpec).build()

@@ -147,7 +147,7 @@ class TestClassRenderer(val spec: FhirSpec) {
         classBuilder.addFunction(FunSpec.builder("readFile")
                 .returns(String::class)
                 .addParameter("fileName", String::class)
-                .addStatement("%T(\"sample_data/\" + fileName).reader().use { reader ->", ClassName("java.io", "File"))
+                .addStatement("%T(\"${Settings.samplesDir}/\" + fileName).reader().use { reader ->", ClassName("java.io", "File"))
                 .addStatement("return reader.readText()")
                 .addStatement("}")
                 .build()
@@ -161,14 +161,17 @@ class TestClassRenderer(val spec: FhirSpec) {
         classBuilder.addProperty("mapper", Gson::class.java)
         classBuilder.addProperty("builder", GsonBuilder::class.java)
 
+        val fd = ClassName("com.juicelabs.fhir.default", "FhirDate")
+        val fdSerializer = ClassName("com.juicelabs.fhir.default", "FhirDateSerializer")
+        val fdDeserializer = ClassName("com.juicelabs.fhir.default", "FhirDateDeSerializer")
         classBuilder.addInitializerBlock(CodeBlock.of(
                 """
             builder = GsonBuilder()
-            builder.registerTypeAdapter(FhirDate::class.java, FhirDateSerializer())
-            builder.registerTypeAdapter(FhirDate::class.java, FhirDateDeSerializer())
+            builder.registerTypeAdapter(%T::class.java, %T())
+            builder.registerTypeAdapter(%T::class.java, %T())
             mapper = builder.create()
 
-            """.trimIndent()))
+            """.trimIndent(), fd, fdSerializer, fd, fdDeserializer))
     }
 
 

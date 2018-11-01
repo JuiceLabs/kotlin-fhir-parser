@@ -32,8 +32,10 @@ class FhirStructureDefinitionRenderer(val spec: FhirSpec) {
 
             val header = buildHeader(data)
             val out = FileSpec.builder(spec.packageName, profile.targetName)
-
+            buildImports(out, imports)
             out.addComment(header)
+
+
 
             classes.filter { c -> !Settings.natives.contains(c.name) }.forEach { c ->
                 val classBody = buildClass(c)

@@ -1,5 +1,6 @@
-package com.juicelabs.fhir.model
-
+// Generated from FHIR com.juicelabs.fhir.FhirStructureDefinition@6002a7a9 on 2018-11-01T09:59:26.632 
+//  2018, JuiceLab, LLC
+package com.juicelabs.fhir.default
 
 import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
