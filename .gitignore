@@ -3,5 +3,5 @@
 target
 model-generator/src/main/kotlin/com/juicelabs/fhir/model/*.kt
 model-generator/src/test/kotlin/com/juicelabs/fhir/model/*.kt
-fhir-parser/sample_data
+model-generator/src/test/resources/model/sample_data
 model-generator/download
