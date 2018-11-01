@@ -3,4 +3,5 @@
 target
 fhir-parser/src/main/kotlin/com/juicelabs/fhir/model/*.kt
 fhir-parser/src/test/kotlin/com/juicelabs/fhir/model/*.kt
+fhir-parser/sample_data
 model-generator/download
